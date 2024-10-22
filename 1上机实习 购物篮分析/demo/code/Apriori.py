@@ -3,11 +3,12 @@
 # 代码8-6 构建关联规则模型
 
 from numpy import *
- 
+from data_clean import data_translation
+
 def loadDataSet():
     return [['a', 'c', 'e'], ['b', 'd'], ['b', 'c'], ['a', 'b', 'c', 'd'], ['a', 'b'], ['b', 'c'], ['a', 'b'],
             ['a', 'b', 'c', 'e'], ['a', 'b', 'c'], ['a', 'c', 'e']]
- 
+
 def createC1(dataSet):
     C1 = []
     for transaction in dataSet:
@@ -16,8 +17,8 @@ def createC1(dataSet):
                 C1.append([item])
     C1.sort()
     # 映射为frozenset唯一性的，可使用其构造字典
-    return list(map(frozenset, C1))     
-    
+    return list(map(frozenset, C1))
+
 # 从候选K项集到频繁K项集（支持度计算）
 def scanD(D, Ck, minSupport):
     ssCnt = {}
@@ -35,9 +36,9 @@ def scanD(D, Ck, minSupport):
         support = ssCnt[key] / numItems  # 计算支持度
         if support >= minSupport:
             retList.insert(0, key)  # 满足条件加入L1中
-            supportData[key] = support  
+            supportData[key] = support
     return retList, supportData
- 
+
 def calSupport(D, Ck, min_support):
     dict_sup = {}
     for i in D:
@@ -57,7 +58,7 @@ def calSupport(D, Ck, min_support):
 # 此处可设置返回全部的支持度数据（或者频繁项集的支持度数据）
             supportData[i] = temp_sup
     return relist, supportData
- 
+
 # 改进剪枝算法
 def aprioriGen(Lk, k):
     retList = []
@@ -113,18 +114,18 @@ def getSubset(fromList, toList):
             tt = list(tt)
             if len(tt) > 1:
                 getSubset(tt, toList)
- 
+
 def calcConf(freqSet, H, supportData, ruleList, minConf=0.7):
     for conseq in H:  #遍历H中的所有项集并计算它们的可信度值
         conf = supportData[freqSet] / supportData[freqSet - conseq]  # 可信度计算，结合支持度数据
         # 提升度lift计算lift = p(a & b) / p(a)*p(b)
         lift = supportData[freqSet] / (supportData[conseq] * supportData[freqSet - conseq])
- 
+
         if conf >= minConf and lift > 1:
             print(freqSet - conseq, '-->', conseq, '支持度', round(supportData[freqSet], 6), '置信度：', round(conf, 6),
                   'lift值为：', round(lift, 6))
             ruleList.append((freqSet - conseq, conseq, conf))
- 
+
 # 生成规则
 def gen_rule(L, supportData, minConf = 0.7):
     bigRuleList = []
@@ -136,9 +137,9 @@ def gen_rule(L, supportData, minConf = 0.7):
             getSubset(H1, all_subset)  # 生成所有的子集
             calcConf(freqSet, all_subset, supportData, bigRuleList, minConf)
     return bigRuleList
- 
+
 if __name__ == '__main__':
-    dataSet = data_translation
+    dataSet = data_translation()
     L, supportData = apriori(dataSet, minSupport = 0.02)
     rule = gen_rule(L, supportData, minConf = 0.35)
 
