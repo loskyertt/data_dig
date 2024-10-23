@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*- 
+#-*- coding: utf-8 -*-
 
 import numpy as np
 import os,re
@@ -28,7 +28,7 @@ def Var(data=None):
     :return: 对应的三阶颜色矩
     '''
     x = np.mean((data-data.mean())**3)
-return np.sign(x)*abs(x)**(1/3)
+    return np.sign(x)*abs(x)**(1/3)
 
 # 批量处理图片数据
 imgNames = getImgNames(path=path)  # 获取所有图片名称
@@ -60,14 +60,14 @@ for i in range(n):
     labels[i] = imgNames[i][0]  # 样本标签
 
 
-	
+
 from sklearn.model_selection import train_test_split
 # 数据拆分,训练集、测试集
 data_tr,data_te,label_tr,label_te = train_test_split(data,labels,test_size=0.2,random_state=10)
 
 from sklearn.tree import DecisionTreeClassifier
 # 模型训练
-model = DecisionTreeClassifier(random_state=5).fit(data_tr, label_tr) 
+model = DecisionTreeClassifier(random_state=5).fit(data_tr, label_tr)
 
 
 
