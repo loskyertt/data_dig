@@ -10,8 +10,8 @@ class Node:
     def __init__(self, feature=None, threshold=None, left=None, right=None, value=None):
         self.feature = feature  # 分裂特征
         self.threshold = threshold  # 分裂阈值
-        self.left = left  # 左子树
-        self.right = right  # 右子树
+        self.left = left
+        self.right = right
         self.value = value  # 叶节点的类别
 
 
@@ -31,8 +31,9 @@ class C45DecisionTree:
         ps = hist / len(y)
         return -np.sum([p * np.log2(p) for p in ps if p > 0])
 
+    # 信息增益比计算
     def _information_gain_ratio(self, y, X_column, threshold):
-        # 计算父节点的熵
+        # 父节点的熵
         parent_entropy = self._entropy(y)
 
         # 根据阈值分割数据
@@ -138,17 +139,68 @@ def evaluate_model(X_train, X_test, y_train, y_test):
     return model, train_accuracy, test_accuracy, conf_matrix_train, conf_matrix_test
 
 
+# 模型预测
+def predict_air_quality(model, le, input_data):
+    """
+    预测空气质量等级
+
+    Parameters:
+    -----------
+    model: C45DecisionTree
+        训练好的C4.5决策树模型
+    le: LabelEncoder
+        标签编码器
+    input_data: dict or pandas.DataFrame
+        需要预测的数据，包含SO2, NO, NO2, NOx, PM10, PM2-5的值
+
+    Returns:
+    --------
+    str: 预测的空气质量等级
+    dict: 包含详细信息的字典
+    """
+    # 转换输入数据为DataFrame
+    if isinstance(input_data, dict):
+        input_df = pd.DataFrame([input_data])
+    else:
+        input_df = input_data.copy()
+
+    # 确保列的顺序正确
+    required_columns = ['SO2', 'NO', 'NO2', 'NOx', 'PM10', 'PM2-5']
+    input_df = input_df[required_columns]
+
+    # 转换为numpy数组进行预测
+    X = input_df.values
+
+    # 进行预测
+    prediction_encoded = model.predict(X)
+
+    # 转换预测结果
+    prediction = le.inverse_transform(prediction_encoded)
+
+    # 如果是单个样本，返回详细信息
+    if len(prediction) == 1:
+        result = {
+            'predicted_class': prediction[0],
+            'input_values': input_data,
+            'message': f"预测的空气质量等级为: {prediction[0]}"
+        }
+        return prediction[0], result
+
+    # 如果是多个样本，返回所有预测结果
+    return prediction, {'predicted_classes': prediction.tolist()}
+
+
 if __name__ == "__main__":
 
     data = pd.read_csv("2上机实习 决策树/拓展思考/environment_data.csv")
 
-    # 准备数据
     X = data.drop('空气等级', axis=1).values
+    # 转换为独热编码
     le = LabelEncoder()
     y = le.fit_transform(data['空气等级'])
 
     # 划分训练集和测试集
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # 训练和评估模型
     model, train_accuracy, test_accuracy, conf_matrix_train, conf_matrix_test = evaluate_model(X_train, X_test, y_train, y_test)
@@ -164,32 +216,26 @@ if __name__ == "__main__":
     print("\n测试集混淆矩阵:")
     print(conf_matrix_test)
 
-    # 特征重要性分析
-    feature_names = ['SO2', 'NO', 'NO2', 'NOx', 'PM10', 'PM2-5']
-    importance_dict = {}
+    print()
 
-    def calculate_feature_importance(node, importance_dict, depth=0):
-        if node.value is not None:  # 叶节点
-            return
+    # 预测单样本
+    new_sample = {
+        'SO2': 0.020,
+        'NO': 0.001,
+        'NO2': 0.045,
+        'NOx': 0.046,
+        'PM10': 0.070,
+        'PM2-5': 0.045
+    }
+    predicted_class, details = predict_air_quality(model, le, new_sample)
+    print(details['message'])
 
-        if node.feature not in importance_dict:
-            importance_dict[node.feature] = 0
-        importance_dict[node.feature] += 1.0 / (depth + 1)  # 根据深度加权
-
-        calculate_feature_importance(node.left, importance_dict, depth + 1)
-        calculate_feature_importance(node.right, importance_dict, depth + 1)
-
-    calculate_feature_importance(model.root, importance_dict)
-
-    # 归一化特征重要性
-    total_importance = sum(importance_dict.values())
-    normalized_importance = {feature_names[k]: v/total_importance
-                            for k, v in importance_dict.items()}
-
-    # 打印特征重要性
-    print("\n特征重要性:")
-    for feature, importance in sorted(normalized_importance.items(),
-                                    key=lambda x: x[1], reverse=True):
-        print(f"{feature}: {importance:.4f}")
-
-
+    # 预测多个样本
+    new_samples = pd.DataFrame([
+        {'SO2': 0.020, 'NO': 0.001, 'NO2': 0.045, 'NOx': 0.046, 'PM10': 0.070, 'PM2-5': 0.045},
+        {'SO2': 0.025, 'NO': 0.002, 'NO2': 0.055, 'NOx': 0.057, 'PM10': 0.080, 'PM2-5': 0.055}
+    ])
+    predictions, _ = predict_air_quality(model, le, new_samples)
+    print("\n多个样本预测结果:")
+    for i, pred in enumerate(predictions):
+        print(f"样本 {i+1} 预测的空气质量等级: {pred}")

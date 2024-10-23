@@ -71,6 +71,9 @@ for i in range(n):
     labels[i] = imgNames[i][0]  # 样本标签
 
 
+# print(data)
+# print(labels)
+
 # 代码9-2
 
 # 数据拆分,训练集、测试集
@@ -85,8 +88,17 @@ model = DecisionTreeClassifier(random_state=5).fit(data_tr, label_tr)
 
 # 水质评价
 pre_te = model.predict(data_te)
-# 混淆矩阵
+# 混淆矩阵-测试集
 cm_te = confusion_matrix(label_te, pre_te)
-print(cm_te)
-# 准确率
-print("准确率", accuracy_score(label_te, pre_te))
+print("混淆矩阵-测试集：\n", cm_te)
+print("测试集准确率：", accuracy_score(label_te, pre_te))
+
+print()
+
+# 水质评价
+pre_tr = model.predict(data_tr)
+# 混淆矩阵-训练集
+cm_tr = confusion_matrix(label_tr, pre_tr)
+print("混淆矩阵-训练集：\n", cm_tr)
+print("训练集准确率：", accuracy_score(label_tr, pre_tr))
+
