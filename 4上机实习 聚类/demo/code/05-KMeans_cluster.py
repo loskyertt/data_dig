@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*- 
+#-*- coding: utf-8 -*-
 
 # 代码7-9
 
@@ -9,11 +9,11 @@ import numpy as np
 from sklearn.cluster import KMeans  # 导入kmeans算法
 
 # 读取标准化后的数据
-airline_scale = np.load('../tmp/airline_scale.npz')['arr_0']
+airline_scale = np.load('4上机实习 聚类/demo/tmp/airline_scale.npz')['arr_0']
 k = 5  # 确定聚类中心数
 
 # 构建模型，随机种子设为123
-kmeans_model = KMeans(n_clusters = k,n_jobs=4,random_state=123)
+kmeans_model = KMeans(n_clusters = k,n_init=4,random_state=123)
 fit_kmeans = kmeans_model.fit(airline_scale)  # 模型训练
 
 # 查看聚类结果
@@ -33,8 +33,8 @@ print(cluster_center)
 
 # 代码7-10
 
-%matplotlib inline
-import matplotlib.pyplot as plt 
+# %matplotlib inline
+import matplotlib.pyplot as plt
 # 客户分群雷达图
 labels = ['ZL','ZR','ZF','ZM','ZC']
 legen = ['客户群' + str(i + 1) for i in cluster_center.index]  # 客户群命名，作为雷达图的图例
@@ -47,21 +47,24 @@ centers = np.array(cluster_center.iloc[:, 0:])
 # 分割圆周长，并让其闭合
 n = len(labels)
 angle = np.linspace(0, 2 * np.pi, n, endpoint=False)
-angle = np.concatenate((angle, [angle[0]]))
+angle = np.concatenate((angle, [angle[0]]))  # 使角度闭合
 
 # 绘图
-fig = plt.figure(figsize = (8,6))
+fig = plt.figure(figsize=(8, 6))
 ax = fig.add_subplot(111, polar=True)  # 以极坐标的形式绘制图形
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号 
+plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+
 # 画线
 for i in range(len(kinds)):
-    ax.plot(angle, centers[i], linestyle=lstype[i], linewidth=2, label=kinds[i])
-# 添加属性标签
-ax.set_thetagrids(angle * 180 / np.pi, labels)
+    ax.plot(angle, centers[i], linestyle=lstype[i], linewidth=2, label=legen[i])
+
+# 添加属性标签，确保标签数量与角度匹配
+ax.set_thetagrids(angle[:-1] * 180 / np.pi, labels)  # 去掉最后一个角度，使标签与实际属性匹配
 plt.title('客户特征分析雷达图')
-plt.legend(legen)
+plt.legend()
 plt.show()
-plt.close
+plt.close()
+
 
 

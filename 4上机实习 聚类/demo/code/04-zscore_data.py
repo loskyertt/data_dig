@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*- 
+#-*- coding: utf-8 -*-
 
 # 代码7-7
 
@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 
 # 读取数据清洗后的数据
-cleanedfile = '../tmp/data_cleaned.csv'  # 数据清洗后保存的文件路径
+cleanedfile = '4上机实习 聚类/demo/tmp/data_cleaned.csv'  # 数据清洗后保存的文件路径
 airline = pd.read_csv(cleanedfile, encoding = 'utf-8')
 # 选取需求属性
 airline_selection = airline[['FFP_DATE','LOAD_TIME','LAST_TO_END',
@@ -33,5 +33,5 @@ print('构建的LRFMC属性前5行为：\n',airline_features.head())
 # 数据标准化
 from sklearn.preprocessing import StandardScaler
 data = StandardScaler().fit_transform(airline_features)
-np.savez('../tmp/airline_scale.npz',data)
+np.savez('4上机实习 聚类/demo/tmp/airline_scale.npz',data)
 print('标准化后LRFMC五个属性为：\n',data[:5,:])

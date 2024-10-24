@@ -1,13 +1,13 @@
-#-*- coding: utf-8 -*- 
+#-*- coding: utf-8 -*-
 
 # 代码7-2
 
 # 对数据的分布分析
 
 import pandas as pd
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 
-datafile= '../data/air_data.csv'  # 航空原始数据,第一行为属性标签
+datafile= '4上机实习 聚类/demo/data/air_data.csv'  # 航空原始数据,第一行为属性标签
 
 # 读取原始数据，指定UTF-8编码（需要用文本编辑器将数据装换为UTF-8编码）
 data = pd.read_csv(datafile, encoding = 'utf-8')
@@ -45,7 +45,7 @@ lv_five = pd.value_counts(data['FFP_TIER'])[5]
 lv_six = pd.value_counts(data['FFP_TIER'])[6]
 # 绘制会员各级别人数条形图
 fig = plt.figure(figsize = (8 ,5))  # 设置画布大小
-plt.bar(left=range(3), height=[lv_four,lv_five,lv_six], width=0.4, alpha=0.8, color='skyblue')
+plt.bar(x=range(3), height=[lv_four,lv_five,lv_six], width=0.4, alpha=0.8, color='skyblue')
 plt.xticks([index for index in range(3)], ['4','5','6'])
 plt.xlabel('会员等级')
 plt.ylabel('会员人数')
@@ -58,7 +58,7 @@ age = data['AGE'].dropna()
 age = age.astype('int64')
 # 绘制会员年龄分布箱型图
 fig = plt.figure(figsize = (5 ,10))
-plt.boxplot(age, 
+plt.boxplot(age,
             patch_artist=True,
             labels = ['会员年龄'],  # 设置x轴标题
             boxprops = {'facecolor':'lightblue'})  # 设置填充颜色
@@ -79,7 +79,7 @@ sks = data['SEG_KM_SUM']
 
 # 绘制最后乘机至结束时长箱线图
 fig = plt.figure(figsize = (5 ,8))
-plt.boxplot(lte, 
+plt.boxplot(lte,
             patch_artist=True,
             labels = ['时长'],  # 设置x轴标题
             boxprops = {'facecolor':'lightblue'})  # 设置填充颜色
@@ -91,7 +91,7 @@ plt.close
 
 # 绘制客户飞行次数箱线图
 fig = plt.figure(figsize = (5 ,8))
-plt.boxplot(fc, 
+plt.boxplot(fc,
             patch_artist=True,
             labels = ['飞行次数'],  # 设置x轴标题
             boxprops = {'facecolor':'lightblue'})  # 设置填充颜色
@@ -103,7 +103,7 @@ plt.close
 
 # 绘制客户总飞行公里数箱线图
 fig = plt.figure(figsize = (5 ,10))
-plt.boxplot(sks, 
+plt.boxplot(sks,
             patch_artist=True,
             labels = ['总飞行公里数'],  # 设置x轴标题
             boxprops = {'facecolor':'lightblue'})  # 设置填充颜色
@@ -133,7 +133,7 @@ plt.close
 ps = data['Points_Sum']
 # 绘制会员总累计积分箱线图
 fig = plt.figure(figsize = (5 ,8))
-plt.boxplot(ps, 
+plt.boxplot(ps,
             patch_artist=True,
             labels = ['总累计积分'],  # 设置x轴标题
             boxprops = {'facecolor':'lightblue'})  # 设置填充颜色
@@ -160,8 +160,8 @@ print('相关性矩阵为：\n',dt_corr)
 
 # 绘制热力图
 import seaborn as sns
-plt.subplots(figsize=(10, 10)) # 设置画面大小 
-sns.heatmap(dt_corr, annot=True, vmax=1, square=True, cmap='Blues') 
+plt.subplots(figsize=(10, 10)) # 设置画面大小
+sns.heatmap(dt_corr, annot=True, vmax=1, square=True, cmap='Blues')
 plt.show()
 plt.close
 

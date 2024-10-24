@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*- 
+#-*- coding: utf-8 -*-
 
 # 代码7-6
 
@@ -7,15 +7,15 @@
 import numpy as np
 import pandas as pd
 
-datafile = '../data/air_data.csv'  # 航空原始数据路径
-cleanedfile = '../tmp/data_cleaned.csv'  # 数据清洗后保存的文件路径
+datafile = '4上机实习 聚类/demo/data/air_data.csv'  # 航空原始数据路径
+cleanedfile = '4上机实习 聚类/demo/tmp/data_cleaned.csv'  # 数据清洗后保存的文件路径
 
 # 读取数据
 airline_data = pd.read_csv(datafile,encoding = 'utf-8')
 print('原始数据的形状为：',airline_data.shape)
 
 # 去除票价为空的记录
-airline_notnull = airline_data.loc[airline_data['SUM_YR_1'].notnull() & 
+airline_notnull = airline_data.loc[airline_data['SUM_YR_1'].notnull() &
                                    airline_data['SUM_YR_2'].notnull(),:]
 print('删除缺失记录后数据的形状为：',airline_notnull.shape)
 

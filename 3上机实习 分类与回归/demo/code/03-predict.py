@@ -32,13 +32,39 @@ print('预测结果为：\n',new_reg_data.loc[2014:2015,:])  # 预测结果展�
 
 # 代码6-6
 
+# import matplotlib.pyplot as plt
+# from sklearn.svm import LinearSVR
+
+# inputfile = '3上机实习 分类与回归/demo/tmp/new_reg_data_GM11.csv'  # 灰色预测后保存的路径
+# data = pd.read_csv(inputfile)  # 读取数据
+# feature = ['x1', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x13']  # 属性所在列
+# # data_train = data.loc[range(1994,2014)].copy()  # 取2014年前的数据建模
+# data_train = data.iloc[:20].copy()  # 取前20行数据，相当于取1994到2013年的数据
+# data_mean = data_train.mean()
+# data_std = data_train.std()
+# data_train = (data_train - data_mean)/data_std  # 数据标准化
+# x_train = data_train[feature].values  # 属性数据
+# y_train = data_train['y'].values  # 标签数据
+
+# linearsvr = LinearSVR()  # 调用LinearSVR()函数
+# linearsvr.fit(x_train,y_train)
+# x = ((data[feature] - data_mean[feature])/data_std[feature]).values  # 预测，并还原结果。
+# data['y_pred'] = linearsvr.predict(x) * data_std['y'] + data_mean['y']
+# outputfile = '3上机实习 分类与回归/demo/tmp/new_reg_data_GM11_revenue.csv'  # SVR预测后保存的结果
+# data.to_csv(outputfile)
+
+# print('真实值与预测值分别为：\n',data[['y','y_pred']])
+
+# fig = data[['y','y_pred']].plot(subplots = True, style=['b-o','r-*'])  # 画出预测结果图
+# plt.show()
+
 import matplotlib.pyplot as plt
 from sklearn.svm import LinearSVR
+import pandas as pd
 
 inputfile = '3上机实习 分类与回归/demo/tmp/new_reg_data_GM11.csv'  # 灰色预测后保存的路径
 data = pd.read_csv(inputfile)  # 读取数据
 feature = ['x1', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x13']  # 属性所在列
-# data_train = data.loc[range(1994,2014)].copy()  # 取2014年前的数据建模
 data_train = data.iloc[:20].copy()  # 取前20行数据，相当于取1994到2013年的数据
 data_mean = data_train.mean()
 data_std = data_train.std()
@@ -47,13 +73,24 @@ x_train = data_train[feature].values  # 属性数据
 y_train = data_train['y'].values  # 标签数据
 
 linearsvr = LinearSVR()  # 调用LinearSVR()函数
-linearsvr.fit(x_train,y_train)
-x = ((data[feature] - data_mean[feature])/data_std[feature]).values  # 预测，并还原结果。
+linearsvr.fit(x_train, y_train)
+x = ((data[feature] - data_mean[feature])/data_std[feature]).values  # 预测，并还原结果
 data['y_pred'] = linearsvr.predict(x) * data_std['y'] + data_mean['y']
+
 outputfile = '3上机实习 分类与回归/demo/tmp/new_reg_data_GM11_revenue.csv'  # SVR预测后保存的结果
 data.to_csv(outputfile)
 
-print('真实值与预测值分别为：\n',data[['y','y_pred']])
+print('真实值与预测值分别为：\n', data[['y', 'y_pred']])
 
-fig = data[['y','y_pred']].plot(subplots = True, style=['b-o','r-*'])  # 画出预测结果图
+# 绘制预测结果图
+plt.figure(figsize=(10, 6))
+years = list(range(1994, 2014)) + [2014, 2015]
+plt.plot(years, data['y'], 'b-o', label='真实值')
+plt.plot(years, data['y_pred'], 'r-*', label='预测值')
+
+plt.xlabel('年份')
+plt.ylabel('财政收入')
+plt.title('真实值与预测值对比')
+plt.legend()
+plt.grid(True)
 plt.show()
