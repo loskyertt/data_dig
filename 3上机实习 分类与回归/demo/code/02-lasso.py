@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import Lasso
 
-inputfile = '../data/data.csv'  # 输入的数据文件
+inputfile = '3上机实习 分类与回归/demo/data/data.csv'  # 输入的数据文件
 data = pd.read_csv(inputfile)  # 读取数据
 lasso = Lasso(1000)  # 调用Lasso()函数，设置λ的值为1000
 lasso.fit(data.iloc[:,0:13],data['y'])
@@ -18,6 +18,7 @@ mask = lasso.coef_ != 0  # 返回一个相关系数是否为零的布尔数组
 print('相关系数是否为零：',mask)
 
 outputfile ='../tmp/new_reg_data.csv'  # 输出的数据文件
-new_reg_data = data.iloc[:, mask]  # 返回相关系数非零的数据
-new_reg_data.to_csv(outputfile)  # 存储数据
+new_reg_data = data.iloc[:, 0:13].iloc[:, mask]  # 返回相关系数非零的特征数据
+new_reg_data['y'] = data['y']  # 添加目标变量 'y'
+new_reg_data.to_csv(outputfile, index=False)  # 存储数据
 print('输出数据的维度为：',new_reg_data.shape)  # 查看输出数据的维度

@@ -31,7 +31,7 @@ class C45DecisionTree:
         ps = hist / len(y)
         return -np.sum([p * np.log2(p) for p in ps if p > 0])
 
-    # 信息增益比计算
+    # 信息增益率计算
     def _information_gain_ratio(self, y, X_column, threshold):
         # 父节点的熵
         parent_entropy = self._entropy(y)
